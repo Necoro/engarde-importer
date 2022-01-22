@@ -1,0 +1,61 @@
+name: Go
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    env:
+      GOARCH: amd64
+    steps:
+
+    - name: Set up Go 1.16
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16
+      id: go
+
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Get dependencies
+      run: go get -v -t -d ./...
+
+    - name: Build (Windows)
+      run: go build -v ./...
+      env:
+        GOOS: windows
+    
+    - name: Build (Linux)
+      run: go build -v ./...
+    
+    - name: Test
+      run: go test -v ./...
+
+    - name: Vet
+      run: go vet ./...
+
+    - name: Release Build (Linux)
+      run: go build -ldflags '-s -w' -o bin/enguarde-importer
+      env:
+        GOOS: windows
+    
+    - name: Release Build (Windows)
+      run: go build -ldflags '-s -w -H=windowsgui' -o bin/enguarde-importer.exe
+      env:
+        GOOS: windows
+
+    - name: Upload Release
+      uses: ColinPitrat/update-release@v1.0.1
+      id: update-release
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        files: bin/enguarde-importer bin/enguarde-importer.exe
+
+
