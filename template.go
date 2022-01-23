@@ -7,8 +7,6 @@ import (
 	"io/fs"
 	"os"
 	"path"
-
-	"golang.org/x/text/encoding/charmap"
 )
 
 const verbatimPath = "templates/verbatim"
@@ -33,9 +31,7 @@ func writeVerbatimFile(outputDir string, entry fs.DirEntry) error {
 	}
 	defer output.Close()
 
-	encodedOutput := charmap.ISO8859_1.NewEncoder().Writer(output)
-
-	if _, err = io.Copy(encodedOutput, input); err != nil {
+	if _, err = io.Copy(encodedWriter(output), input); err != nil {
 		return fmt.Errorf("writing to '%s': %w", outName, err)
 	}
 

@@ -5,12 +5,13 @@ import (
 	"io"
 
 	"github.com/gogs/chardet"
+	"golang.org/x/text/encoding/charmap"
 	"golang.org/x/text/encoding/ianaindex"
 )
 
-// getEncodedReader tries to determine the encoding of the content of `r`.
+// encodedReader tries to determine the encoding of the content of `r`.
 // It returns a new reader that returns UTF-8 content.
-func getEncodedReader(r io.Reader) (io.Reader, error) {
+func encodedReader(r io.Reader) (io.Reader, error) {
 	buf := make([]byte, 128)
 
 	n, err := io.ReadFull(r, buf)
@@ -37,4 +38,9 @@ func getEncodedReader(r io.Reader) (io.Reader, error) {
 	}
 
 	return enc.NewDecoder().Reader(r), nil
+}
+
+// encodedWriter returns a wrapper around the passed in writer that encodes into the expected charset.
+func encodedWriter(w io.Writer) io.Writer {
+	return charmap.ISO8859_1.NewEncoder().Writer(w)
 }

@@ -86,7 +86,7 @@ func parseOphardtInput(fileName string) ([]participant, error) {
 		return nil, fmt.Errorf("opening input file '%s': %w", fileName, err)
 	}
 
-	encReader, err := getEncodedReader(f)
+	encReader, err := encodedReader(f)
 	if err != nil {
 		return nil, fmt.Errorf("cannot determine encoding of file '%s': %w", fileName, err)
 	}
