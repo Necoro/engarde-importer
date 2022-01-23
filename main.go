@@ -165,7 +165,8 @@ func run() error {
 	y, _ := p[1].enguarde()
 
 	fmt.Print(x, y)
-	return nil
+
+	return writeVerbatim()
 }
 
 func main() {
