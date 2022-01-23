@@ -57,5 +57,6 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         files: bin/enguarde-importer bin/enguarde-importer.exe
+        tag: release
 
 
