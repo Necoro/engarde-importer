@@ -15,49 +15,6 @@ type enguarde interface {
 	enguarde() (string, error)
 }
 
-type Gender int
-
-const (
-	GenderM = iota
-	GenderF
-)
-
-func (g Gender) String() string {
-	switch g {
-	case GenderM:
-		return "M"
-	case GenderF:
-		return "F"
-	default:
-		return fmt.Sprintf("U%d", g)
-	}
-}
-
-func (g Gender) enguarde() (string, error) {
-	switch g {
-	case GenderM:
-		return "masculin", nil
-	case GenderF:
-		return "feminin", nil
-	default:
-		return "", fmt.Errorf("unknown gender value '%d'", g)
-	}
-}
-
-func (g *Gender) UnmarshalCSV(content []byte) error {
-	c := string(content)
-	switch c {
-	case "M":
-		*g = GenderM
-	case "F":
-		*g = GenderF
-	default:
-		return fmt.Errorf("unknown gender value '%s'", c)
-	}
-
-	return nil
-}
-
 type participant struct {
 	LastName    string `csv:"lastname"`
 	FirstName   string `csv:"firstname"`
