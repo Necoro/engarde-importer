@@ -20,7 +20,7 @@ func (g Gender) String() string {
 	}
 }
 
-func (g Gender) enguarde() (string, error) {
+func (g Gender) engarde() (string, error) {
 	switch g {
 	case GenderM:
 		return "masculin", nil
@@ -69,7 +69,7 @@ func (a AgeGroup) String() string {
 	}
 }
 
-func (a AgeGroup) enguarde() (string, error) {
+func (a AgeGroup) engarde() (string, error) {
 	switch a {
 	case AgeVeteran:
 		return "veteran", nil
@@ -112,7 +112,7 @@ func (w Weapon) String() string {
 	}
 }
 
-func (w Weapon) enguarde() (string, error) {
+func (w Weapon) engarde() (string, error) {
 	switch w {
 	case Epee:
 		return "epee", nil

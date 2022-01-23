@@ -1,4 +1,4 @@
-module github.com/Necoro/enguarde-importer
+module github.com/Necoro/engarde-importer
 
 go 1.17
 

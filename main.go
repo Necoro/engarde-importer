@@ -11,8 +11,9 @@ import (
 	"github.com/jszwec/csvutil"
 )
 
-type enguarde interface {
-	enguarde() (string, error)
+//goland:noinspection GoUnusedType
+type engarde interface {
+	engarde() (string, error)
 }
 
 type participant struct {
@@ -32,9 +33,9 @@ type club struct {
 	id   uint
 }
 
-func (p participant) enguarde() (string, error) {
+func (p participant) engarde() (string, error) {
 	name := strings.ToUpper(p.LastName)
-	gender, err := p.Gender.enguarde()
+	gender, err := p.Gender.engarde()
 	if err != nil {
 		return "", err
 	}
@@ -46,7 +47,7 @@ func (p participant) enguarde() (string, error) {
 `, gender, name, p.FirstName, p.id, p.club.id), nil
 }
 
-func (c club) enguarde() (string, error) {
+func (c club) engarde() (string, error) {
 	return fmt.Sprintf(`
 {[classe club] [nom "%s"] [modifie vrai] [date_oed "332"] [cle %d]}`, c.name, c.id), nil
 }
