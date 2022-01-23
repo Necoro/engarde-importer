@@ -1,0 +1,18 @@
+(def formats_tireur
+  champs_feuilles_pou_select (marge_gche nomprenom num grille_feuille signature marge2)
+  champs_feuilles_pou_taille (57 198 16 200 156 50)
+  champs_info_pou_select (marge_gche nomprenom nation1 grille_feuille marge1 vic_match indice td rang marge2)
+  champs_info_pou_taille (57 133 63 200 50 50 40 40 32 50)
+  champs_clas_pou_select (marge_gche rang nomprenom nation1 vic_match indice td groupe marge1 marge_dte)
+  champs_clas_pou_taille (57 32 180 63 50 40 40 50 50 50)
+  champs_feuilles_match_select (marge_gche nomprenom grille_match signature)
+  champs_feuilles_match_taille (57 149 276 120)
+  champs_info_tab_select (marge_gche num nomprenom)
+  champs_info_tab_taille (57 16 173)
+  champs_clas_select (marge_gche rang nomprenom club1 nation1 marge1 marge2 marge_dte)
+  champs_clas_taille (57 63 213 150 63 50 50 50)
+  ordres_clas_select ordre_rang
+)
+
+(def formats_arbitre
+)
