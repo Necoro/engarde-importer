@@ -53,8 +53,9 @@ func (c club) engarde() (string, error) {
 {[classe club] [nom "%s"] [modifie vrai] [date_oed "332"] [cle %d]}`, c.name, c.id), nil
 }
 
-func prepareParticipants(participants []participant) {
-	clubs := map[string]club{}
+func prepareParticipants(participants []participant) []club {
+	clubMap := map[string]club{}
+	var clubs []club
 	var clubId, participantId uint
 
 	for i := range participants {
@@ -68,27 +69,30 @@ func prepareParticipants(participants []participant) {
 			pClub = strings.Split(pClub, ", ")[0]
 		}
 
-		if c, ok := clubs[pClub]; ok {
+		if c, ok := clubMap[pClub]; ok {
 			p.club = c
 		} else {
 			clubId++
 
 			c = club{pClub, clubId}
 			p.club = c
-			clubs[p.Club] = c
+			clubMap[p.Club] = c
+			clubs = append(clubs, c)
 		}
 	}
+
+	return clubs
 }
 
-func parseOphardtInput(fileName string) ([]participant, error) {
+func parseOphardtInput(fileName string) ([]participant, []club, error) {
 	f, err := os.Open(fileName)
 	if err != nil {
-		return nil, fmt.Errorf("opening input file '%s': %w", fileName, err)
+		return nil, nil, fmt.Errorf("opening input file '%s': %w", fileName, err)
 	}
 
 	encReader, err := encodedReader(f)
 	if err != nil {
-		return nil, fmt.Errorf("cannot determine encoding of file '%s': %w", fileName, err)
+		return nil, nil, fmt.Errorf("cannot determine encoding of file '%s': %w", fileName, err)
 	}
 
 	csvReader := csv.NewReader(encReader)
@@ -96,17 +100,17 @@ func parseOphardtInput(fileName string) ([]participant, error) {
 
 	dec, err := csvutil.NewDecoder(csvReader)
 	if err != nil {
-		return nil, fmt.Errorf("reading from file '%s': %w", fileName, err)
+		return nil, nil, fmt.Errorf("reading from file '%s': %w", fileName, err)
 	}
 	dec.DisallowMissingColumns = true
 
 	var participants []participant
 	if err = dec.Decode(&participants); err != nil {
-		return nil, fmt.Errorf("decoding file '%s': %w", fileName, err)
+		return nil, nil, fmt.Errorf("decoding file '%s': %w", fileName, err)
 	}
 
-	prepareParticipants(participants)
-	return participants, nil
+	clubs := prepareParticipants(participants)
+	return participants, clubs, nil
 }
 
 func usage() string {
@@ -155,12 +159,12 @@ func run() error {
 		return err
 	}
 
-	_, err = parseOphardtInput(cfg.inputFile)
+	participants, clubs, err := parseOphardtInput(cfg.inputFile)
 	if err != nil {
 		return err
 	}
 
-	return write(cfg)
+	return write(cfg, participants, clubs)
 }
 
 func main() {
