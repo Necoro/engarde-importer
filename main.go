@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/jszwec/csvutil"
 )
@@ -159,7 +160,7 @@ func run() error {
 		return err
 	}
 
-	return writeVerbatim()
+	return write(cfg)
 }
 
 func main() {
