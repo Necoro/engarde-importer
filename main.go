@@ -108,21 +108,56 @@ func parseOphardtInput(fileName string) ([]participant, error) {
 	return participants, nil
 }
 
-func run() error {
-	if len(os.Args) <= 1 {
-		return errors.New("need filename to start with")
-	}
-	fileName := os.Args[1]
+func usage() string {
+	return fmt.Sprintf("Usage: %s <input csv> <output dir> <name> <M/F> <S/V> <D/F/S> <dd.mm.yyyy>", os.Args[0])
+}
 
-	p, err := parseOphardtInput(fileName)
+type EngardeConfig struct {
+	inputFile string
+	outputDir string
+	name      string
+	gender    Gender
+	ageGroup  AgeGroup
+	weapon    Weapon
+	date      time.Time
+}
+
+func parseArgs() (config EngardeConfig, err error) {
+	config.inputFile = os.Args[1]
+	config.outputDir = os.Args[2]
+	config.name = os.Args[3]
+
+	if config.gender, err = GenderFromString(os.Args[4]); err != nil {
+		return EngardeConfig{}, err
+	}
+	if config.ageGroup, err = AgeGroupFromString(os.Args[5]); err != nil {
+		return EngardeConfig{}, err
+	}
+	if config.weapon, err = WeaponFromString(os.Args[6]); err != nil {
+		return EngardeConfig{}, err
+	}
+
+	if config.date, err = time.Parse("02.01.2006", os.Args[7]); err != nil {
+		return EngardeConfig{}, err
+	}
+
+	return config, nil
+}
+
+func run() error {
+	if len(os.Args) <= 7 {
+		return errors.New(usage())
+	}
+
+	cfg, err := parseArgs()
 	if err != nil {
 		return err
 	}
 
-	x, _ := p[0].enguarde()
-	y, _ := p[1].enguarde()
-
-	fmt.Print(x, y)
+	_, err = parseOphardtInput(cfg.inputFile)
+	if err != nil {
+		return err
+	}
 
 	return writeVerbatim()
 }
