@@ -14,7 +14,7 @@ import (
 
 //goland:noinspection GoUnusedType
 type engarde interface {
-	engarde() (string, error)
+	Engarde() (string, error)
 }
 
 type participant struct {
@@ -34,9 +34,9 @@ type club struct {
 	id   uint
 }
 
-func (p participant) engarde() (string, error) {
+func (p participant) Engarde() (string, error) {
 	name := strings.ToUpper(p.LastName)
-	gender, err := p.Gender.engarde()
+	gender, err := p.Gender.Engarde()
 	if err != nil {
 		return "", err
 	}
@@ -48,7 +48,7 @@ func (p participant) engarde() (string, error) {
 `, gender, name, p.FirstName, p.id, p.club.id), nil
 }
 
-func (c club) engarde() (string, error) {
+func (c club) Engarde() (string, error) {
 	return fmt.Sprintf(`
 {[classe club] [nom "%s"] [modifie vrai] [date_oed "332"] [cle %d]}`, c.name, c.id), nil
 }
@@ -118,31 +118,32 @@ func usage() string {
 }
 
 type EngardeConfig struct {
-	inputFile string
-	outputDir string
-	name      string
-	gender    Gender
-	ageGroup  AgeGroup
-	weapon    Weapon
-	date      time.Time
+	inputFile   string
+	outputDir   string
+	Name        string
+	Description string
+	Gender      Gender
+	AgeGroup    AgeGroup
+	Weapon      Weapon
+	Date        time.Time
 }
 
 func parseArgs() (config EngardeConfig, err error) {
 	config.inputFile = os.Args[1]
 	config.outputDir = os.Args[2]
-	config.name = os.Args[3]
+	config.Name = os.Args[3]
 
-	if config.gender, err = GenderFromString(os.Args[4]); err != nil {
+	if config.Gender, err = GenderFromString(os.Args[4]); err != nil {
 		return EngardeConfig{}, err
 	}
-	if config.ageGroup, err = AgeGroupFromString(os.Args[5]); err != nil {
+	if config.AgeGroup, err = AgeGroupFromString(os.Args[5]); err != nil {
 		return EngardeConfig{}, err
 	}
-	if config.weapon, err = WeaponFromString(os.Args[6]); err != nil {
+	if config.Weapon, err = WeaponFromString(os.Args[6]); err != nil {
 		return EngardeConfig{}, err
 	}
 
-	if config.date, err = time.Parse("02.01.2006", os.Args[7]); err != nil {
+	if config.Date, err = time.Parse("02.01.2006", os.Args[7]); err != nil {
 		return EngardeConfig{}, err
 	}
 

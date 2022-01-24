@@ -103,7 +103,7 @@ func writeEngarde(outputDir, fileName string, entries []engarde) error {
 	encodedOutput := encodedWriter(output)
 
 	for _, entry := range entries {
-		str, err := entry.engarde()
+		str, err := entry.Engarde()
 		if err != nil {
 			return err
 		}
