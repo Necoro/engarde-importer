@@ -11,8 +11,14 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# CSV files
+# Test content
 *.csv
+test/
+*.zip
+T/
+
+# Idea
+.idea
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
