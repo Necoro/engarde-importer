@@ -12,79 +12,54 @@ import (
 	"github.com/jszwec/csvutil"
 )
 
-//goland:noinspection GoUnusedType
-type engarde interface {
-	Engarde() (string, error)
-}
-
-type participant struct {
+type Participant struct {
 	LastName    string `csv:"lastname"`
 	FirstName   string `csv:"firstname"`
 	DateOfBirth string `csv:"dateofbirth"`
 	Gender      Gender `csv:"gender"`
 	Nation      string `csv:"nation"`
 	Region      string `csv:"region"`
-	Club        string `csv:"club"`
-	id          uint
-	club        club
+	ClubStr     string `csv:"club"`
+	Id          uint   `csv:"-"`
+	ClubId      uint   `csv:"-"`
 }
 
-type club struct {
-	name string
-	id   uint
+type Club struct {
+	Name string
+	Id   uint
 }
 
-func (p participant) Engarde() (string, error) {
-	name := strings.ToUpper(p.LastName)
-	gender, err := p.Gender.Engarde()
-	if err != nil {
-		return "", err
-	}
-
-	return fmt.Sprintf(`
-{[classe tireur] [sexe %s] [presence present] [carton_coach non] [status normal]
- [medical non] [lateralite droite] [nom " %s "] [prenom " %s "]
- [points 1.0] [date_oed "340"] [cle %d] [club1 %d]}
-`, gender, name, p.FirstName, p.id, p.club.id), nil
-}
-
-func (c club) Engarde() (string, error) {
-	return fmt.Sprintf(`
-{[classe club] [nom "%s"] [modifie vrai] [date_oed "332"] [cle %d]}`, c.name, c.id), nil
-}
-
-func prepareParticipants(participants []participant) []club {
-	clubMap := map[string]club{}
-	var clubs []club
+func prepareParticipants(participants []Participant) []Club {
+	clubMap := map[string]uint{}
+	var clubs []Club
 	var clubId, participantId uint
 
 	for i := range participants {
 		p := &participants[i]
 		participantId++
 
-		p.id = participantId
+		p.Id = participantId
 
-		pClub := p.Club
+		pClub := p.ClubStr
 		if strings.Contains(pClub, ", ") {
 			pClub = strings.Split(pClub, ", ")[0]
 		}
 
-		if c, ok := clubMap[pClub]; ok {
-			p.club = c
+		if cId, ok := clubMap[pClub]; ok {
+			p.ClubId = cId
 		} else {
 			clubId++
 
-			c = club{pClub, clubId}
-			p.club = c
-			clubMap[p.Club] = c
-			clubs = append(clubs, c)
+			p.ClubId = clubId
+			clubMap[pClub] = clubId
+			clubs = append(clubs, Club{pClub, clubId})
 		}
 	}
 
 	return clubs
 }
 
-func parseOphardtInput(fileName string) ([]participant, []club, error) {
+func parseOphardtInput(fileName string) ([]Participant, []Club, error) {
 	f, err := os.Open(fileName)
 	if err != nil {
 		return nil, nil, fmt.Errorf("opening input file '%s': %w", fileName, err)
@@ -104,7 +79,7 @@ func parseOphardtInput(fileName string) ([]participant, []club, error) {
 	}
 	dec.DisallowMissingColumns = true
 
-	var participants []participant
+	var participants []Participant
 	if err = dec.Decode(&participants); err != nil {
 		return nil, nil, fmt.Errorf("decoding file '%s': %w", fileName, err)
 	}
@@ -118,14 +93,16 @@ func usage() string {
 }
 
 type EngardeConfig struct {
-	inputFile   string
-	outputDir   string
-	Name        string
-	Description string
-	Gender      Gender
-	AgeGroup    AgeGroup
-	Weapon      Weapon
-	Date        time.Time
+	inputFile    string
+	outputDir    string
+	Name         string
+	Description  string
+	Gender       Gender
+	AgeGroup     AgeGroup
+	Weapon       Weapon
+	Date         time.Time
+	Participants []Participant
+	Clubs        []Club
 }
 
 func parseArgs() (config EngardeConfig, err error) {
@@ -160,12 +137,12 @@ func run() error {
 		return err
 	}
 
-	participants, clubs, err := parseOphardtInput(cfg.inputFile)
+	cfg.Participants, cfg.Clubs, err = parseOphardtInput(cfg.inputFile)
 	if err != nil {
 		return err
 	}
 
-	return write(cfg, participants, clubs)
+	return write(cfg)
 }
 
 func main() {

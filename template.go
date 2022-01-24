@@ -7,24 +7,21 @@ import (
 	"io/fs"
 	"os"
 	"path"
+	"strings"
 	"text/template"
 )
 
-const verbatimPath = "templates/verbatim"
-const participantsName = "tireur.txt"
-const clubsName = "club.txt"
-const competitionName = "competition.egw"
+const templatePath = "templates/"
+const verbatimPath = templatePath + "verbatim"
+const templateGlob = templatePath + "*.tpl"
 
-//go:embed templates/verbatim
-var verbatim embed.FS
-
-//go:embed templates/competition.egw.tpl
-var competition string
+//go:embed templates
+var templates embed.FS
 
 func writeVerbatimFile(outputDir string, entry fs.DirEntry) error {
 	inName := path.Join(verbatimPath, entry.Name())
 
-	input, err := verbatim.Open(inName)
+	input, err := templates.Open(inName)
 	if err != nil {
 		return fmt.Errorf("reading bundled file '%s': %w", entry.Name(), err)
 	}
@@ -45,7 +42,7 @@ func writeVerbatimFile(outputDir string, entry fs.DirEntry) error {
 }
 
 func writeVerbatim(outputDir string) error {
-	entries, err := verbatim.ReadDir(verbatimPath)
+	entries, err := templates.ReadDir(verbatimPath)
 	if err != nil {
 		return err
 	}
@@ -59,7 +56,7 @@ func writeVerbatim(outputDir string) error {
 	return nil
 }
 
-func write(config EngardeConfig, participants []participant, clubs []club) error {
+func write(config EngardeConfig) error {
 	if err := os.MkdirAll(config.outputDir, 0755); err != nil {
 		return fmt.Errorf("creating output directory '%s': %w", config.outputDir, err)
 	}
@@ -68,69 +65,35 @@ func write(config EngardeConfig, participants []participant, clubs []club) error
 		return fmt.Errorf("copying default files: %w", err)
 	}
 
-	if err := writeParticipants(config.outputDir, participants); err != nil {
-		return fmt.Errorf("writing participant data: %w", err)
-	}
-
-	if err := writeClubs(config.outputDir, clubs); err != nil {
-		return fmt.Errorf("writing club data: %w", err)
-	}
-
-	if err := writeCompetition(config.outputDir, config); err != nil {
-		return fmt.Errorf("writing competition file: %w", err)
+	if err := writeTemplates(config.outputDir, config); err != nil {
+		return fmt.Errorf("writing template files: %w", err)
 	}
 
 	return nil
 }
 
-func writeClubs(outputDir string, clubs []club) error {
-	entries := make([]engarde, len(clubs))
-	for i := range clubs {
-		entries[i] = clubs[i]
-	}
-
-	return writeEngarde(outputDir, clubsName, entries)
+var funcMap = template.FuncMap{
+	"upper": strings.ToUpper,
 }
 
-func writeParticipants(outputDir string, participants []participant) error {
-	entries := make([]engarde, len(participants))
-	for i := range participants {
-		entries[i] = participants[i]
-	}
-
-	return writeEngarde(outputDir, participantsName, entries)
-}
-
-func writeEngarde(outputDir, fileName string, entries []engarde) error {
-	outName := path.Join(outputDir, fileName)
-	output, err := os.Create(outName)
+func writeTemplates(outputDir string, config EngardeConfig) error {
+	tpls, err := template.New("root").Funcs(funcMap).ParseFS(templates, templateGlob)
 	if err != nil {
-		return fmt.Errorf("creating '%s': %w", outName, err)
+		return fmt.Errorf("parsing templates: %w", err)
 	}
-	defer output.Close()
 
-	encodedOutput := encodedWriter(output)
-
-	for _, entry := range entries {
-		str, err := entry.Engarde()
-		if err != nil {
+	for _, tpl := range tpls.Templates() {
+		if err = writeTemplate(tpl, outputDir, config); err != nil {
 			return err
 		}
-		if _, err = encodedOutput.Write([]byte(str)); err != nil {
-			return fmt.Errorf("writing to '%s': %w", outName, err)
-		}
 	}
 
 	return nil
 }
 
-func writeCompetition(outputDir string, config EngardeConfig) error {
-	tpl, err := template.New(competitionName).Parse(competition)
-	if err != nil {
-		return fmt.Errorf("parsing template '%s': %w", competitionName, err)
-	}
-
-	outName := path.Join(outputDir, competitionName)
+func writeTemplate(tpl *template.Template, outputDir string, config EngardeConfig) error {
+	resultName := strings.TrimSuffix(tpl.Name(), ".tpl")
+	outName := path.Join(outputDir, resultName)
 	output, err := os.Create(outName)
 	if err != nil {
 		return fmt.Errorf("creating '%s': %w", outName, err)
@@ -140,7 +103,7 @@ func writeCompetition(outputDir string, config EngardeConfig) error {
 	encodedOutput := encodedWriter(output)
 
 	if err = tpl.Execute(encodedOutput, config); err != nil {
-		return fmt.Errorf("executing template '%s': %w", competitionName, err)
+		return fmt.Errorf("executing template '%s': %w", tpl.Name(), err)
 	}
 	return nil
 }
