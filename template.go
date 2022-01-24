@@ -7,14 +7,19 @@ import (
 	"io/fs"
 	"os"
 	"path"
+	"text/template"
 )
 
 const verbatimPath = "templates/verbatim"
 const participantsName = "tireur.txt"
 const clubsName = "club.txt"
+const competitionName = "competition.egw"
 
 //go:embed templates/verbatim
 var verbatim embed.FS
+
+//go:embed templates/competition.egw.tpl
+var competition string
 
 func writeVerbatimFile(outputDir string, entry fs.DirEntry) error {
 	inName := path.Join(verbatimPath, entry.Name())
@@ -71,6 +76,10 @@ func write(config EngardeConfig, participants []participant, clubs []club) error
 		return fmt.Errorf("writing club data: %w", err)
 	}
 
+	if err := writeCompetition(config.outputDir, config); err != nil {
+		return fmt.Errorf("writing competition file: %w", err)
+	}
+
 	return nil
 }
 
@@ -112,5 +121,26 @@ func writeEngarde(outputDir, fileName string, entries []engarde) error {
 		}
 	}
 
+	return nil
+}
+
+func writeCompetition(outputDir string, config EngardeConfig) error {
+	tpl, err := template.New(competitionName).Parse(competition)
+	if err != nil {
+		return fmt.Errorf("parsing template '%s': %w", competitionName, err)
+	}
+
+	outName := path.Join(outputDir, competitionName)
+	output, err := os.Create(outName)
+	if err != nil {
+		return fmt.Errorf("creating '%s': %w", outName, err)
+	}
+	defer output.Close()
+
+	encodedOutput := encodedWriter(output)
+
+	if err = tpl.Execute(encodedOutput, config); err != nil {
+		return fmt.Errorf("executing template '%s': %w", competitionName, err)
+	}
 	return nil
 }
