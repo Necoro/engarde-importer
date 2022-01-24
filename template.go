@@ -27,18 +27,12 @@ func writeVerbatimFile(outputDir string, entry fs.DirEntry) error {
 	}
 	defer input.Close()
 
-	outName := path.Join(outputDir, entry.Name())
-	output, err := os.Create(outName)
-	if err != nil {
-		return fmt.Errorf("creating '%s': %w", outName, err)
-	}
-	defer output.Close()
-
-	if _, err = io.Copy(encodedWriter(output), input); err != nil {
-		return fmt.Errorf("writing to '%s': %w", outName, err)
+	writeFn := func(writer io.Writer) error {
+		_, err := io.Copy(writer, input)
+		return err
 	}
 
-	return nil
+	return writeOutput(outputDir, entry.Name(), writeFn)
 }
 
 func writeVerbatim(outputDir string) error {
@@ -93,17 +87,23 @@ func writeTemplates(outputDir string, config EngardeConfig) error {
 
 func writeTemplate(tpl *template.Template, outputDir string, config EngardeConfig) error {
 	resultName := strings.TrimSuffix(tpl.Name(), ".tpl")
-	outName := path.Join(outputDir, resultName)
+	writeFn := func(w io.Writer) error {
+		return tpl.Execute(w, config)
+	}
+
+	return writeOutput(outputDir, resultName, writeFn)
+}
+
+func writeOutput(outputDir, fileName string, writeFn func(writer io.Writer) error) error {
+	outName := path.Join(outputDir, fileName)
 	output, err := os.Create(outName)
 	if err != nil {
 		return fmt.Errorf("creating '%s': %w", outName, err)
 	}
 	defer output.Close()
 
-	encodedOutput := encodedWriter(output)
-
-	if err = tpl.Execute(encodedOutput, config); err != nil {
-		return fmt.Errorf("executing template '%s': %w", tpl.Name(), err)
+	if err = writeFn(encodedWriter(output)); err != nil {
+		return fmt.Errorf("writing to '%s': %w", outName, err)
 	}
 	return nil
 }
