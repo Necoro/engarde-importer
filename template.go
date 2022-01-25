@@ -11,9 +11,11 @@ import (
 	"text/template"
 )
 
-const templatePath = "templates/"
-const verbatimPath = templatePath + "verbatim"
-const templateGlob = templatePath + "*.tpl"
+const (
+	templatePath = "templates/"
+	verbatimPath = templatePath + "verbatim"
+	templateGlob = templatePath + "*.tpl"
+)
 
 //go:embed templates
 var templates embed.FS
