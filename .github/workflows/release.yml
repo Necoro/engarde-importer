@@ -13,7 +13,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-2022]
+        include:
+          - os: ubuntu-latest
+            output: bin/engarde-importer
+            ldflags: ""
+          - os: windows-2022
+            output: bin/engarde-importer.exe
+            ldflags: "-H=windowsgui"
     env:
       GOARCH: amd64
     steps:
@@ -49,9 +55,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Get dependencies
-        run: go get -v -t -d ./...
-
       - name: Build
         run: go build -v ./...
 
@@ -62,14 +65,14 @@ jobs:
         run: go vet ./...
 
       - name: Release Build
-        run: go build -ldflags '-s -w -H=windowsgui'
+        run: go build -ldflags '-s -w ${matrix.ldflags}' -o ${matrix.output}
 
       - name: Upload Release
         uses: ColinPitrat/update-release@v1.0.1
         id: update-release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: bin/*
+          files: ${matrix.output}
           tag: release
 
 
