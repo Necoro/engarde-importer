@@ -66,7 +66,11 @@ func run() error {
 }
 
 func main() {
-	if err := run(); err != nil {
-		log.Fatalf("An error occured: %v", err)
+	if len(os.Args) == 1 {
+		gui()
+	} else {
+		if err := run(); err != nil {
+			log.Fatalf("An error occured: %v", err)
+		}
 	}
 }
