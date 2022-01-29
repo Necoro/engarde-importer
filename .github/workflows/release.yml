@@ -19,7 +19,7 @@ jobs:
             ldflags: ""
           - os: windows-2022
             output: bin/engarde-importer.exe
-            ldflags: "-H=windowsgui"
+            ldflags: "-H=windowsgui -extldflags=-static"
     env:
       GOARCH: amd64
     steps:
