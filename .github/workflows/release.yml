@@ -65,14 +65,14 @@ jobs:
         run: go vet ./...
 
       - name: Release Build
-        run: go build -ldflags '-s -w ${matrix.ldflags}' -o ${matrix.output}
+        run: go build -ldflags '-s -w ${{ matrix.ldflags }}' -o ${{ matrix.output }}
 
       - name: Upload Release
         uses: ColinPitrat/update-release@v1.0.1
         id: update-release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: ${matrix.output}
+          files: ${{ matrix.output }}
           tag: release
 
 
