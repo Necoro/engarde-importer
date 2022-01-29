@@ -7,56 +7,69 @@ on:
     branches: [ master ]
 
 jobs:
-
   build:
     name: Build
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-2022]
     env:
       GOARCH: amd64
     steps:
+      - name: Set up Go 1.17
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.17
+        id: go
 
-    - name: Set up Go 1.17
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.17
-      id: go
+      - id: go-cache-paths
+        run: |
+            echo "::set-output name=go-build::$(go env GOCACHE)"
+            echo "::set-output name=go-mod::$(go env GOMODCACHE)"
 
-    - name: Checkout
-      uses: actions/checkout@v2
+      - if: startsWith(matrix.os,'ubuntu')
+        name: Install Dependencies
+        run: |
+              sudo apt-get --allow-releaseinfo-change update
+              sudo apt-get install -y libglfw3-dev libfreetype6-dev
 
-    - name: Get dependencies
-      run: go get -v -t -d ./...
+      - name: Go Build Cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.go-cache-paths.outputs.go-build }}
+          key: ${{ runner.os }}-go-build-${{ hashFiles('**/go.sum') }}
 
-    - name: Build (Windows)
-      run: go build -v ./...
-      env:
-        GOOS: windows
-    
-    - name: Build (Linux)
-      run: go build -v ./...
-    
-    - name: Test
-      run: go test -v ./...
+      - name: Go Mod Cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.go-cache-paths.outputs.go-mod }}
+          key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}
 
-    - name: Vet
-      run: go vet ./...
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Release Build (Linux)
-      run: go build -ldflags '-s -w' -o bin/engarde-importer
-      env:
-        GOOS: windows
-    
-    - name: Release Build (Windows)
-      run: go build -ldflags '-s -w -H=windowsgui' -o bin/engarde-importer.exe
-      env:
-        GOOS: windows
+      - name: Get dependencies
+        run: go get -v -t -d ./...
 
-    - name: Upload Release
-      uses: ColinPitrat/update-release@v1.0.1
-      id: update-release
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        files: bin/engarde-importer bin/engarde-importer.exe
-        tag: release
+      - name: Build
+        run: go build -v ./...
+
+      - name: Test
+        run: go test -v ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Release Build
+        run: go build -ldflags '-s -w -H=windowsgui'
+
+      - name: Upload Release
+        uses: ColinPitrat/update-release@v1.0.1
+        id: update-release
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: bin/*
+          tag: release
 
 
