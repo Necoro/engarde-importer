@@ -9,7 +9,9 @@ import (
 
 //go:generate rsrc -manifest engarde-importer.exe.manifest
 
-var guiCfg EngardeConfig
+var (
+	guiCfg EngardeConfig
+)
 
 type gridLayout struct {
 	size    float32
@@ -57,6 +59,8 @@ func (grid *gridLayout) Build() {
 }
 
 func loop(w *g.MasterWindow) func() {
+	const comboSize = 120
+
 	return func() {
 		g.SingleWindow().Layout(
 			g.Align(g.AlignCenter).To(g.Label("Engarde Importer")),
@@ -66,7 +70,15 @@ func loop(w *g.MasterWindow) func() {
 				Line("Beschreibung", g.InputText(&guiCfg.Description)),
 				Line("Wettkampftag", g.DatePicker("##date", &guiCfg.Date).
 					Format("02.01.2006").StartOfWeek(time.Monday).
-					Size(120)),
+					Size(comboSize)),
+				Line("Altersklasse", g.Combo(
+					"", guiCfg.AgeGroup.String(), AgeGroupStrings,
+					(*int32)(&guiCfg.AgeGroup)).
+					Size(comboSize)),
+				Line("Waffe", g.Combo(
+					"", guiCfg.Weapon.String(), WeaponStrings,
+					(*int32)(&guiCfg.Weapon)).
+					Size(comboSize)),
 			),
 			g.Spacing(),
 			g.Align(g.AlignCenter).To(g.Button("Quit").OnClick(w.Close)),

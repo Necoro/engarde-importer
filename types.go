@@ -51,22 +51,17 @@ func (g *Gender) UnmarshalCSV(content []byte) error {
 	}
 }
 
-type AgeGroup int
+type AgeGroup int32
 
 const (
 	AgeVeteran AgeGroup = iota
 	AgeSenior
 )
 
+var AgeGroupStrings = []string{"Veteranen", "Senioren"}
+
 func (a AgeGroup) String() string {
-	switch a {
-	case AgeVeteran:
-		return "V"
-	case AgeSenior:
-		return "S"
-	default:
-		return fmt.Sprintf("U%d", a)
-	}
+	return AgeGroupStrings[a]
 }
 
 func (a AgeGroup) Engarde() (string, error) {
@@ -91,7 +86,7 @@ func AgeGroupFromString(content string) (AgeGroup, error) {
 	}
 }
 
-type Weapon int
+type Weapon int32
 
 const (
 	Epee Weapon = iota
@@ -99,17 +94,15 @@ const (
 	Sabre
 )
 
+var WeaponStrings = []string{"Degen", "Florett", "Säbel"}
+var WeaponShorts = []string{"D", "F", "S"}
+
 func (w Weapon) String() string {
-	switch w {
-	case Epee:
-		return "D"
-	case Foil:
-		return "F"
-	case Sabre:
-		return "S"
-	default:
-		return fmt.Sprintf("U%d", w)
-	}
+	return WeaponStrings[w]
+}
+
+func (w Weapon) ShortString() string {
+	return WeaponShorts[w]
 }
 
 func (w Weapon) Engarde() (string, error) {
