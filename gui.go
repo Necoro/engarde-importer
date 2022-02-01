@@ -7,6 +7,8 @@ import (
 	"github.com/AllenDang/imgui-go"
 )
 
+//go:generate rsrc -manifest engarde-importer.exe.manifest
+
 var guiCfg EngardeConfig
 
 type gridLayout struct {
