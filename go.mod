@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/AllenDang/giu v0.6.2-0.20220130021726-eb9f90ebac9d
+	github.com/AllenDang/imgui-go v1.12.1-0.20220118055608-8cbd98e97ca2
 	github.com/gogs/chardet v0.0.0-20211120154057-b7413eaefb8f
 	github.com/jszwec/csvutil v1.6.0
 	golang.org/x/text v0.3.7
@@ -11,7 +12,6 @@ require (
 
 require (
 	github.com/AllenDang/go-findfont v0.0.0-20200702051237-9f180485aeb8 // indirect
-	github.com/AllenDang/imgui-go v1.12.1-0.20220118055608-8cbd98e97ca2 // indirect
 	github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3 // indirect
 	github.com/go-gl/gl v0.0.0-20211210172815-726fda9656d6 // indirect
 	github.com/go-gl/glfw/v3.3/glfw v0.0.0-20211213063430-748e38ca8aec // indirect

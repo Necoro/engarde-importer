@@ -1,5 +1,5 @@
-github.com/AllenDang/giu v0.6.2-0.20220129052746-0de32e35e8ed h1:SQRjhR+MftjKTYp+qv4TOmtt/VfY56bV47Yq6pJESgo=
-github.com/AllenDang/giu v0.6.2-0.20220129052746-0de32e35e8ed/go.mod h1:OhWky6qYjKeJ9QiJxQbYo16phVpdtcSVD6OI9kDZUK4=
+github.com/AllenDang/giu v0.6.2-0.20220130021726-eb9f90ebac9d h1:TqTYiufOR0EyI2P0HWSGtYifu3rNIy1nPZARGvD2p4g=
+github.com/AllenDang/giu v0.6.2-0.20220130021726-eb9f90ebac9d/go.mod h1:OhWky6qYjKeJ9QiJxQbYo16phVpdtcSVD6OI9kDZUK4=
 github.com/AllenDang/go-findfont v0.0.0-20200702051237-9f180485aeb8 h1:dKZMqib/yUDoCFigmz2agG8geZ/e3iRq304/KJXqKyw=
 github.com/AllenDang/go-findfont v0.0.0-20200702051237-9f180485aeb8/go.mod h1:b4uuDd0s6KRIPa84cEEchdQ9ICh7K0OryZHbSzMca9k=
 github.com/AllenDang/imgui-go v1.12.1-0.20220118055608-8cbd98e97ca2 h1:H9Ohl0tXES9WxO3jq9HdE+4A6eXXybFmRvNdQo2GxLM=
@@ -18,7 +18,6 @@ github.com/gogs/chardet v0.0.0-20211120154057-b7413eaefb8f/go.mod h1:Pcatq5tYkCW
 github.com/jszwec/csvutil v1.6.0 h1:QORXquCT0t8nUKD7utAD4HDmQMgG0Ir9WieZXzpa7ms=
 github.com/jszwec/csvutil v1.6.0/go.mod h1:Rpu7Uu9giO9subDyMCIQfHVDuLrcaC36UA4YcJjGBkg=
 github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0SNc=
-github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
 github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 h1:KoWmjvw+nsYOo29YJK9vDA65RGE3NrOnUtO7a+RF9HU=
 github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8/go.mod h1:HKlIX3XHQyzLZPlr7++PzdhaXEj94dEiJgZDTsxEqUI=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
