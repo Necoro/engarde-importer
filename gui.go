@@ -96,7 +96,7 @@ func loop(w *g.MasterWindow) func() {
 func gui() {
 	guiCfg.Date = time.Now()
 	w := g.NewMasterWindow("Engarde Importer", 400, 200, 0)
-	if img, _, err := image.Decode(bytes.NewReader(icon)); err != nil {
+	if img, _, err := image.Decode(bytes.NewReader(icon)); err == nil {
 		w.SetIcon([]image.Image{img})
 	}
 
