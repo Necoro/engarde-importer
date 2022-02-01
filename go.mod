@@ -26,4 +26,4 @@ require (
 	golang.org/x/sys v0.0.0-20210909193231-528a39cd75f3 // indirect
 )
 
-replace github.com/AllenDang/giu => github.com/Necoro/giu v0.6.2-0.20220201193109-e952fcce4aff
+replace github.com/AllenDang/giu => github.com/Necoro/giu v0.6.2-0.20220201221735-f324c6f17ebf
