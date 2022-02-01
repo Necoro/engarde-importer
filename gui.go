@@ -1,13 +1,20 @@
 package main
 
 import (
+	"bytes"
+	_ "embed"
+	"image"
+	_ "image/png"
 	"time"
 
 	g "github.com/AllenDang/giu"
 	"github.com/AllenDang/imgui-go"
 )
 
-//go:generate rsrc -manifest engarde-importer.exe.manifest
+//go:generate goversioninfo -64 -o resource_amd64.syso
+
+//go:embed monitor_48.png
+var icon []byte
 
 var (
 	guiCfg EngardeConfig
@@ -89,5 +96,9 @@ func loop(w *g.MasterWindow) func() {
 func gui() {
 	guiCfg.Date = time.Now()
 	w := g.NewMasterWindow("Engarde Importer", 400, 200, 0)
+	if img, _, err := image.Decode(bytes.NewReader(icon)); err != nil {
+		w.SetIcon([]image.Image{img})
+	}
+
 	w.Run(loop(w))
 }
