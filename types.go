@@ -10,9 +10,14 @@ const (
 )
 
 var GenderStrings = []string{"Herren", "Damen"}
+var GenderStringsShort = []string{"H", "D"}
 
 func (g Gender) String() string {
 	return GenderStrings[g]
+}
+
+func (g Gender) ShortString() string {
+	return GenderStringsShort[g]
 }
 
 func (g Gender) Engarde() (string, error) {
@@ -49,11 +54,11 @@ func (g *Gender) UnmarshalCSV(content []byte) error {
 type AgeGroup int32
 
 const (
-	AgeVeteran AgeGroup = iota
-	AgeSenior
+	AgeSenior AgeGroup = iota
+	AgeVeteran
 )
 
-var AgeGroupStrings = []string{"Veteranen", "Senioren"}
+var AgeGroupStrings = []string{"Senioren", "Veteranen"}
 
 func (a AgeGroup) String() string {
 	return AgeGroupStrings[a]

@@ -3,9 +3,11 @@ package main
 import (
 	"bytes"
 	_ "embed"
+	"fmt"
 	"image"
 	_ "image/png"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -23,14 +25,28 @@ var icon []byte
 var icomoon []byte
 var icomoonFI *g.FontInfo
 
-const comboSize = 120
-
 type entryCfg struct {
-	inputFile string
-	outputDir string
-	gender    Gender
-	ageGroup  AgeGroup
-	weapon    Weapon
+	inputFile    string
+	target       string
+	manualTarget bool
+	gender       Gender
+	ageGroup     AgeGroup
+	weapon       Weapon
+}
+
+func (entry *entryCfg) buildTarget() {
+	if entry.manualTarget {
+		return
+	}
+
+	entry.target = fmt.Sprintf("%s_%s%s",
+		header.name, entry.gender.ShortString(), entry.weapon.ShortString())
+}
+
+func newEntry() entryCfg {
+	e := entryCfg{}
+	e.buildTarget()
+	return e
 }
 
 var (
@@ -99,6 +115,9 @@ func PopID() g.Widget {
 	return g.Custom(imgui.PopID)
 }
 
+const comboSize = 120
+const chooseStr = "Wähle..."
+
 func buildEntry(idx int) g.Widget {
 	entry := &entries[idx]
 
@@ -110,19 +129,39 @@ func buildEntry(idx int) g.Widget {
 		Grid(
 			Line("Waffe", g.Combo("",
 				entry.weapon.String(), WeaponStrings, (*int32)(&entry.weapon)).
-				Size(comboSize)),
+				Size(comboSize).OnChange(entry.buildTarget)),
 			Line("Geschlecht", g.Combo("",
 				entry.gender.String(), GenderStrings, (*int32)(&entry.gender)).
-				Size(comboSize)),
+				Size(comboSize).OnChange(entry.buildTarget)),
 			Line("Altersklasse", g.Combo("",
 				entry.ageGroup.String(), AgeGroupStrings, (*int32)(&entry.ageGroup)).
 				Size(comboSize)),
+			Line("Unterverzeichnis", g.Row(
+				g.InputText(&entry.target).OnChange(func() {
+					if entry.target == "" {
+						entry.manualTarget = false
+						entry.buildTarget()
+					} else {
+						entry.manualTarget = true
+					}
+				}),
+				g.Button(chooseStr).OnClick(func() {
+					dir, err := zenity.SelectFile(
+						zenity.Directory(),
+						zenity.Filename(filepath.Join(header.targetDir, entry.target)+string(filepath.Separator)))
+					if err == nil && dir != "" {
+						entry.target = dir
+						entry.manualTarget = true
+					}
+				}))),
 			Line("Ophardt-Export", g.Row(
 				g.InputText(&entry.inputFile),
-				g.Button("Wähle...").OnClick(func() {
-					file, err := zenity.SelectFile(zenity.FileFilters{
-						{Name: "CSV Files", Patterns: []string{"*.csv"}},
-					})
+				g.Button(chooseStr).OnClick(func() {
+					file, err := zenity.SelectFile(
+						zenity.Filename(entry.inputFile),
+						zenity.FileFilters{
+							{Name: "CSV Files", Patterns: []string{"*.csv"}},
+						})
 					if err == nil && file != "" {
 						entry.inputFile = file
 					}
@@ -153,14 +192,18 @@ func loop() {
 		g.Align(g.AlignCenter).To(g.Label("Engarde Importer")),
 		g.Spacing(),
 		Grid(
-			Line("Name", g.InputText(&header.name)),
+			Line("Name", g.InputText(&header.name).OnChange(func() {
+				for i := range entries {
+					entries[i].buildTarget()
+				}
+			})),
 			Line("Beschreibung", g.InputText(&header.description)),
 			Line("Wettkampftag", g.DatePicker("##date", &header.date).
 				Format("02.01.2006").StartOfWeek(time.Monday).
 				Size(comboSize)),
 			Line("Zielverzeichnis", g.Row(
 				g.InputText(&header.targetDir),
-				g.Button("Wähle...").OnClick(func() {
+				g.Button(chooseStr).OnClick(func() {
 					dir, err := zenity.SelectFile(zenity.Directory(), zenity.Filename(header.targetDir+"/"))
 					if err == nil && dir != "" {
 						header.targetDir = dir
@@ -170,7 +213,7 @@ func loop() {
 		entryBuilder(),
 		g.Style().SetFont(icomoonFI).To(
 			g.Button("\ue900").OnClick(func() {
-				entries = append(entries, entryCfg{})
+				entries = append(entries, newEntry())
 			})),
 		g.Align(g.AlignCenter).To(g.Button("Quit").OnClick(shouldQuit)),
 	)
