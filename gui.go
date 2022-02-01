@@ -34,11 +34,13 @@ type entryCfg struct {
 }
 
 var (
-	name        string
-	description string
-	date        time.Time
-	entries     []entryCfg
-	targetDir   string
+	header struct {
+		name        string
+		description string
+		date        time.Time
+		targetDir   string
+	}
+	entries []entryCfg
 )
 
 type GridLayout struct {
@@ -152,17 +154,17 @@ func loop() {
 		g.Align(g.AlignCenter).To(g.Label("Engarde Importer")),
 		g.Spacing(),
 		Grid(
-			Line("Name", g.InputText(&name)),
-			Line("Beschreibung", g.InputText(&description)),
-			Line("Wettkampftag", g.DatePicker("##date", &date).
+			Line("Name", g.InputText(&header.name)),
+			Line("Beschreibung", g.InputText(&header.description)),
+			Line("Wettkampftag", g.DatePicker("##date", &header.date).
 				Format("02.01.2006").StartOfWeek(time.Monday).
 				Size(comboSize)),
 			Line("Zielverzeichnis", g.Row(
-				g.InputText(&targetDir),
+				g.InputText(&header.targetDir),
 				g.Button("Wähle...").OnClick(func() {
-					dir, err := zenity.SelectFile(zenity.Directory(), zenity.Filename(targetDir+"/"))
+					dir, err := zenity.SelectFile(zenity.Directory(), zenity.Filename(header.targetDir+"/"))
 					if err == nil && dir != "" {
-						targetDir = dir
+						header.targetDir = dir
 					}
 				}))),
 		),
@@ -176,9 +178,9 @@ func loop() {
 }
 
 func gui() {
-	date = time.Now()
+	header.date = time.Now()
 	entries = make([]entryCfg, 1)
-	targetDir, _ = os.UserHomeDir()
+	header.targetDir, _ = os.UserHomeDir()
 
 	icomoonFI = g.AddFontFromBytes("icomoon", icomoon, 16)
 	w := g.NewMasterWindow("Engarde Importer", 500, 400, 0)
