@@ -3,7 +3,7 @@ module github.com/Necoro/engarde-importer
 go 1.17
 
 require (
-	github.com/AllenDang/giu v0.6.2-0.20220129052746-0de32e35e8ed
+	github.com/AllenDang/giu v0.6.2-0.20220130021726-eb9f90ebac9d
 	github.com/gogs/chardet v0.0.0-20211120154057-b7413eaefb8f
 	github.com/jszwec/csvutil v1.6.0
 	golang.org/x/text v0.3.7
