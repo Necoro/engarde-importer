@@ -89,7 +89,7 @@ func loop(w *g.MasterWindow) func() {
 					Size(comboSize)),
 				Line("Ophardt-Export", g.Row(g.InputText(&guiCfg.inputFile), g.SmallButton("Wähle...").OnClick(func() {
 					file, err := zenity.SelectFile(zenity.FileFilters{
-						{"CSV Files", []string{"*.csv"}},
+						{Name: "CSV Files", Patterns: []string{"*.csv"}},
 					})
 
 					if err == nil && file != "" {
