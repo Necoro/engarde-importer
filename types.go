@@ -2,22 +2,17 @@ package main
 
 import "fmt"
 
-type Gender int
+type Gender int32
 
 const (
 	GenderM Gender = iota
 	GenderF
 )
 
+var GenderStrings = []string{"Herren", "Damen"}
+
 func (g Gender) String() string {
-	switch g {
-	case GenderM:
-		return "M"
-	case GenderF:
-		return "F"
-	default:
-		return fmt.Sprintf("U%d", g)
-	}
+	return GenderStrings[g]
 }
 
 func (g Gender) Engarde() (string, error) {
