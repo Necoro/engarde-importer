@@ -9,6 +9,7 @@ import (
 
 	g "github.com/AllenDang/giu"
 	"github.com/AllenDang/imgui-go"
+	"github.com/ncruces/zenity"
 )
 
 //go:generate goversioninfo -64 -o resource_amd64.syso res/versioninfo.json
@@ -86,6 +87,15 @@ func loop(w *g.MasterWindow) func() {
 					"", guiCfg.Weapon.String(), WeaponStrings,
 					(*int32)(&guiCfg.Weapon)).
 					Size(comboSize)),
+				Line("Ophardt-Export", g.Row(g.InputText(&guiCfg.inputFile), g.SmallButton("Wähle...").OnClick(func() {
+					file, err := zenity.SelectFile(zenity.FileFilters{
+						{"CSV Files", []string{"*.csv"}},
+					})
+
+					if err == nil && file != "" {
+						guiCfg.inputFile = file
+					}
+				}))),
 			),
 			g.Spacing(),
 			g.Align(g.AlignCenter).To(g.Button("Quit").OnClick(w.Close)),
@@ -95,7 +105,7 @@ func loop(w *g.MasterWindow) func() {
 
 func gui() {
 	guiCfg.Date = time.Now()
-	w := g.NewMasterWindow("Engarde Importer", 400, 200, 0)
+	w := g.NewMasterWindow("Engarde Importer", 500, 200, 0)
 	if img, _, err := image.Decode(bytes.NewReader(icon)); err == nil {
 		w.SetIcon([]image.Image{img})
 	}
