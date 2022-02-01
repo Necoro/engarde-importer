@@ -20,22 +20,22 @@ var (
 	guiCfg EngardeConfig
 )
 
-type gridLayout struct {
+type GridLayout struct {
 	size    float32
 	widgets []g.Widget
 	labels  []*g.LabelWidget
 }
 
-type gridLine struct {
+type GridLine struct {
 	label  string
 	widget g.Widget
 }
 
-func Line(label string, widget g.Widget) gridLine {
-	return gridLine{label, widget}
+func Line(label string, widget g.Widget) GridLine {
+	return GridLine{label, widget}
 }
 
-func Grid(lines ...gridLine) *gridLayout {
+func Grid(lines ...GridLine) *GridLayout {
 	var size float32
 	widgets := make([]g.Widget, len(lines))
 	labels := make([]*g.LabelWidget, len(lines))
@@ -53,10 +53,10 @@ func Grid(lines ...gridLine) *gridLayout {
 	// add a default padding
 	size = size + 10
 
-	return &gridLayout{size, widgets, labels}
+	return &GridLayout{size, widgets, labels}
 }
 
-func (grid *gridLayout) Build() {
+func (grid *GridLayout) Build() {
 	for i := range grid.labels {
 		g.AlignTextToFramePadding()
 		grid.labels[i].Build()
