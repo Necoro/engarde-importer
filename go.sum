@@ -1,9 +1,9 @@
-github.com/AllenDang/giu v0.6.2-0.20220130021726-eb9f90ebac9d h1:TqTYiufOR0EyI2P0HWSGtYifu3rNIy1nPZARGvD2p4g=
-github.com/AllenDang/giu v0.6.2-0.20220130021726-eb9f90ebac9d/go.mod h1:OhWky6qYjKeJ9QiJxQbYo16phVpdtcSVD6OI9kDZUK4=
 github.com/AllenDang/go-findfont v0.0.0-20200702051237-9f180485aeb8 h1:dKZMqib/yUDoCFigmz2agG8geZ/e3iRq304/KJXqKyw=
 github.com/AllenDang/go-findfont v0.0.0-20200702051237-9f180485aeb8/go.mod h1:b4uuDd0s6KRIPa84cEEchdQ9ICh7K0OryZHbSzMca9k=
 github.com/AllenDang/imgui-go v1.12.1-0.20220118055608-8cbd98e97ca2 h1:H9Ohl0tXES9WxO3jq9HdE+4A6eXXybFmRvNdQo2GxLM=
 github.com/AllenDang/imgui-go v1.12.1-0.20220118055608-8cbd98e97ca2/go.mod h1:lSWsbR1qGBZz405YzfHXcwEyWQq206QC7cYMHoLvmI4=
+github.com/Necoro/giu v0.6.2-0.20220201091852-26ebc142559d h1:FjY+KXwhMasCRFOofYT3+opu3kG529XTBUUFyDvDBwk=
+github.com/Necoro/giu v0.6.2-0.20220201091852-26ebc142559d/go.mod h1:OhWky6qYjKeJ9QiJxQbYo16phVpdtcSVD6OI9kDZUK4=
 github.com/davecgh/go-spew v1.1.0 h1:ZDRjVQ15GmhC3fiQ8ni8+OwkZQO4DARzQgrnXU1Liz8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3 h1:baVdMKlASEHrj19iqjARrPbaRisD7EuZEVJj6ZMLl1Q=
