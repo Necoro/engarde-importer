@@ -44,7 +44,6 @@ var (
 )
 
 type GridLayout struct {
-	size    float32
 	widgets []g.Widget
 	labels  []*g.LabelWidget
 }
@@ -58,32 +57,32 @@ func Line(label string, widget g.Widget) GridLine {
 	return GridLine{label, widget}
 }
 
+const gridPadding = 10
+
+var gridSize float32 = gridPadding
+
 func Grid(lines ...GridLine) *GridLayout {
-	var size float32
 	widgets := make([]g.Widget, len(lines))
 	labels := make([]*g.LabelWidget, len(lines))
 
 	for i, line := range lines {
 		labelSize, _ := g.CalcTextSize(line.label)
-		if labelSize > size {
-			size = labelSize
+		if labelSize+gridPadding > gridSize {
+			gridSize = labelSize + gridPadding
 		}
 
 		labels[i] = g.Label(line.label)
 		widgets[i] = line.widget
 	}
 
-	// add a default padding
-	size = size + 10
-
-	return &GridLayout{size, widgets, labels}
+	return &GridLayout{widgets, labels}
 }
 
 func (grid *GridLayout) Build() {
 	for i := range grid.labels {
 		g.AlignTextToFramePadding()
 		grid.labels[i].Build()
-		imgui.SameLineV(grid.size, 0)
+		imgui.SameLineV(gridSize, 0)
 		grid.widgets[i].Build()
 	}
 }
