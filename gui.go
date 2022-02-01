@@ -11,9 +11,9 @@ import (
 	"github.com/AllenDang/imgui-go"
 )
 
-//go:generate goversioninfo -64 -o resource_amd64.syso
+//go:generate goversioninfo -64 -o resource_amd64.syso res/versioninfo.json
 
-//go:embed monitor_48.png
+//go:embed res/monitor_48.png
 var icon []byte
 
 var (

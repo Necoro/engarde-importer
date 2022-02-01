@@ -34,6 +34,6 @@
             "CharsetID": "04B0"
         }
     },
-    "IconPath": "monitor.ico",
-    "ManifestPath": "engarde-importer.exe.manifest"
+    "IconPath": "res/monitor.ico",
+    "ManifestPath": "res/engarde-importer.exe.manifest"
 }
