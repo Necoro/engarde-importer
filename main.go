@@ -9,8 +9,8 @@ import (
 )
 
 type EngardeConfig struct {
-	inputFile    string
-	outputDir    string
+	InputFile    string
+	OutputDir    string
 	Name         string
 	Description  string
 	Gender       Gender
@@ -26,8 +26,8 @@ func usage() string {
 }
 
 func parseArgs() (config EngardeConfig, err error) {
-	config.inputFile = os.Args[1]
-	config.outputDir = os.Args[2]
+	config.InputFile = os.Args[1]
+	config.OutputDir = os.Args[2]
 	config.Name = os.Args[3]
 
 	if config.Gender, err = GenderFromString(os.Args[4]); err != nil {
@@ -57,12 +57,12 @@ func run() error {
 		return err
 	}
 
-	cfg.Participants, cfg.Clubs, err = parseOphardtInput(cfg.inputFile)
+	cfg.Participants, cfg.Clubs, err = parseOphardtInput(cfg.InputFile)
 	if err != nil {
 		return err
 	}
 
-	return write(cfg)
+	return Write(cfg)
 }
 
 func main() {

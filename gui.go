@@ -18,12 +18,20 @@ import (
 
 //go:generate goversioninfo -64 -o resource_amd64.syso res/versioninfo.json
 
+/*
+ * Embedded Resources
+ */
+
 //go:embed res/monitor_48.png
 var icon []byte
 
 //go:embed res/icomoon.ttf
 var icomoon []byte
 var icomoonFI *g.FontInfo
+
+/*
+ * Data / State
+ */
 
 type entryCfg struct {
 	inputFile    string
@@ -59,6 +67,11 @@ var (
 	entries []entryCfg
 )
 
+/*
+ * Grid Layout
+ */
+// GridLayout is used to calculate the maximum width for labels,
+// so that the following widgets all start at the same offset.
 type GridLayout struct {
 	widgets []g.Widget
 	labels  []*g.LabelWidget
@@ -103,6 +116,10 @@ func (grid *GridLayout) Build() {
 	}
 }
 
+/*
+ * Further additions to Giu
+ */
+
 func Layout(widgets ...g.Widget) g.Layout {
 	return widgets
 }
@@ -115,8 +132,17 @@ func PopID() g.Widget {
 	return g.Custom(imgui.PopID)
 }
 
-const comboSize = 120
-const chooseStr = "Wähle..."
+func shouldQuit() {
+	g.Context.GetPlatform().SetShouldStop(true)
+}
+
+/*
+ * Putting together the GUI
+ */
+const (
+	comboSize = 120
+	chooseStr = "Wähle..."
+)
 
 func buildEntry(idx int) g.Widget {
 	entry := &entries[idx]
@@ -181,10 +207,6 @@ func entryBuilder() g.Widget {
 			buildEntry(i).Build()
 		}
 	})
-}
-
-func shouldQuit() {
-	g.Context.GetPlatform().SetShouldStop(true)
 }
 
 func loop() {

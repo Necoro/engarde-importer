@@ -52,16 +52,16 @@ func writeVerbatim(outputDir string) error {
 	return nil
 }
 
-func write(config EngardeConfig) error {
-	if err := os.MkdirAll(config.outputDir, 0755); err != nil {
-		return fmt.Errorf("creating output directory '%s': %w", config.outputDir, err)
+func Write(config EngardeConfig) error {
+	if err := os.MkdirAll(config.OutputDir, 0755); err != nil {
+		return fmt.Errorf("creating output directory '%s': %w", config.OutputDir, err)
 	}
 
-	if err := writeVerbatim(config.outputDir); err != nil {
+	if err := writeVerbatim(config.OutputDir); err != nil {
 		return fmt.Errorf("copying default files: %w", err)
 	}
 
-	if err := writeTemplates(config.outputDir, config); err != nil {
+	if err := writeTemplates(config.OutputDir, config); err != nil {
 		return fmt.Errorf("writing template files: %w", err)
 	}
 
