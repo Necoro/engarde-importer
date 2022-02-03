@@ -312,7 +312,7 @@ func doImport() {
 		if err := Write(*e.cfg); err != nil {
 			g.Msgbox("Fehler",
 				fmt.Sprintf("Beim Schreiben der Daten für Verzeichnis %s ist ein Fehler aufgetreten\n%v",
-					e.target))
+					e.target, err))
 		}
 	}
 
