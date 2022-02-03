@@ -70,6 +70,7 @@ var (
 /*
  * Grid Layout
  */
+
 // GridLayout is used to calculate the maximum width for labels,
 // so that the following widgets all start at the same offset.
 type GridLayout struct {
@@ -233,10 +234,13 @@ func loop() {
 				}))),
 		),
 		entryBuilder(),
-		g.Style().SetFont(icomoonFI).To(
+		g.Style().SetFont(icomoonFI).To(g.Row(
 			g.Button("\ue900").OnClick(func() {
 				entries = append(entries, newEntry())
-			})),
+			}),
+			g.Button("\ue903").Disabled(len(entries) == 0).OnClick(func() {
+				entries = entries[:len(entries)-1]
+			}))),
 		g.Align(g.AlignCenter).To(g.Button("Quit").OnClick(shouldQuit)),
 	)
 }
