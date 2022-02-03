@@ -40,6 +40,7 @@ type entryCfg struct {
 	gender       Gender
 	ageGroup     AgeGroup
 	weapon       Weapon
+	cfg          *EngardeConfig
 }
 
 func (entry *entryCfg) buildTarget() {
@@ -49,6 +50,17 @@ func (entry *entryCfg) buildTarget() {
 
 	entry.target = fmt.Sprintf("%s_%s%s",
 		header.name, entry.gender.ShortString(), entry.weapon.ShortString())
+}
+
+func (entry *entryCfg) targetDone() bool {
+	return entry.manualTarget || filepath.IsAbs(entry.target)
+}
+
+func (entry *entryCfg) fullTarget() string {
+	if entry.targetDone() {
+		return entry.target
+	}
+	return filepath.Join(header.targetDir, entry.target)
 }
 
 func newEntry() entryCfg {
@@ -241,8 +253,67 @@ func loop() {
 			g.Button("\ue903").Disabled(len(entries) == 0).OnClick(func() {
 				entries = entries[:len(entries)-1]
 			}))),
-		g.Align(g.AlignCenter).To(g.Button("Quit").OnClick(shouldQuit)),
+		g.Align(g.AlignCenter).To(g.Row(
+			g.Button("Import").OnClick(doImport).Disabled(dataMissing()),
+			g.Button("Quit").OnClick(shouldQuit),
+		)),
+		g.PrepareMsgbox(),
 	)
+}
+
+func dataMissing() bool {
+	if header.name == "" {
+		return true
+	}
+	for _, e := range entries {
+		if e.inputFile == "" {
+			return true
+		}
+		if !e.targetDone() && header.targetDir == "" {
+			return true
+		}
+	}
+
+	return false
+}
+
+func doImport() {
+	for i, e := range entries {
+		var err error
+		cfg := EngardeConfig{
+			InputFile:   e.inputFile,
+			OutputDir:   e.fullTarget(),
+			Name:        header.name,
+			Description: header.description,
+			Gender:      e.gender,
+			AgeGroup:    e.ageGroup,
+			Weapon:      e.weapon,
+			Date:        header.date,
+		}
+		entries[i].cfg = &cfg
+
+		if cfg.Participants, cfg.Clubs, err = parseOphardtInput(cfg.InputFile); err != nil {
+			g.Msgbox("Fehler", fmt.Sprintf("Beim Import von %s ist ein Fehler aufgetreten:\n%v",
+				cfg.InputFile, err)).Buttons(g.MsgboxButtonsOk)
+
+			return
+		}
+	}
+
+	for _, e := range entries {
+		if err := Write(*e.cfg); err != nil {
+			g.Msgbox("Fehler",
+				fmt.Sprintf("Beim Schreiben der Daten für Verzeichnis %s ist ein Fehler aufgetreten\n%v",
+					e.target))
+		}
+	}
+
+	g.Msgbox("Import erfolgreich", "Programm schließen?").Buttons(g.MsgboxButtonsYesNo).
+		ResultCallback(func(result g.DialogResult) {
+			if result {
+				shouldQuit()
+			}
+		})
 }
 
 func gui() {
