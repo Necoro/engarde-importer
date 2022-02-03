@@ -48,8 +48,12 @@ func (entry *entryCfg) buildTarget() {
 		return
 	}
 
-	entry.target = fmt.Sprintf("%s_%s%s",
-		header.name, entry.gender.ShortString(), entry.weapon.ShortString())
+	if header.name == "" {
+		entry.target = ""
+	} else {
+		entry.target = fmt.Sprintf("%s_%s%s",
+			header.name, entry.gender.ShortString(), entry.weapon.ShortString())
+	}
 }
 
 func (entry *entryCfg) targetDone() bool {
