@@ -95,8 +95,8 @@ type GridLine struct {
 	widget g.Widget
 }
 
-func Line(label string, widget g.Widget) GridLine {
-	return GridLine{label, widget}
+func Line(label string, widget ...g.Widget) GridLine {
+	return GridLine{label, g.Layout(widget)}
 }
 
 const gridPadding = 10
@@ -184,6 +184,11 @@ func buildEntry(idx int) g.Widget {
 						entry.manualTarget = true
 					}
 				}),
+				g.Tooltip(`Wenn nur ein Name: Unterverzeichnis unter Zielverzeichnis.
+Wenn ein Pfad: Zielverzeichnis wird ignoriert, vollständiger Pfad wird genommen.
+
+Name wird autogeneriert. Autogenerierung ist inaktiv, sobald manuelle Änderungen vorgenommen werden.
+Um die Autogenierung wieder zu aktivieren, einmal den Inhalt löschen.`),
 				g.Button(chooseStr).OnClick(func() {
 					dir, err := zenity.SelectFile(
 						zenity.Directory(),
@@ -195,6 +200,7 @@ func buildEntry(idx int) g.Widget {
 				}))),
 			Line("Ophardt-Export", g.Row(
 				g.InputText(&entry.inputFile),
+				g.Tooltip("Pfad zur CSV aus Ophardt."),
 				g.Button(chooseStr).OnClick(func() {
 					file, err := zenity.SelectFile(
 						zenity.Filename(entry.inputFile),
@@ -231,13 +237,15 @@ func loop() {
 				for i := range entries {
 					entries[i].buildTarget()
 				}
-			})),
-			Line("Beschreibung", g.InputText(&header.description)),
+			}), g.Tooltip("Kurzname des Turniers (z.B. WH2022)")),
+			Line("Beschreibung", g.InputText(&header.description),
+				g.Tooltip("Langname / Beschreibung des Turniers (z.B. Weißherbst 2022)")),
 			Line("Wettkampftag", g.DatePicker("##date", &header.date).
 				Format("02.01.2006").StartOfWeek(time.Monday).
 				Size(comboSize)),
 			Line("Zielverzeichnis", g.Row(
 				g.InputText(&header.targetDir),
+				g.Tooltip("Oberverzeichnis in dem für alle Konfigurationen ein Unterverzeichnis angelegt wird"),
 				g.Button(chooseStr).OnClick(func() {
 					dir, err := zenity.SelectFile(zenity.Directory(), zenity.Filename(header.targetDir+"/"))
 					if err == nil && dir != "" {
