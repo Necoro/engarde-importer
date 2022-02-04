@@ -15,9 +15,11 @@ jobs:
       matrix:
         include:
           - os: ubuntu-latest
+            name: linux
             output: bin/engarde-importer
             ldflags: ""
           - os: windows-2022
+            name: windows
             output: bin/engarde-importer.exe
             ldflags: "-H=windowsgui -extldflags=-static"
     env:
@@ -63,14 +65,16 @@ jobs:
         run: go vet ./...
 
       - name: Release Build
-        run: go build -ldflags '-s -w ${{ matrix.ldflags }}' -o ${{ matrix.output }}
+        run: |
+          go build -ldflags '-s -w ${{ matrix.ldflags }}' -o ${{ matrix.output }}
+          7z a engarde-importer_${{ matrix.name }}.zip ${{ matrix.output }}
 
       - name: Upload Release
         uses: ColinPitrat/update-release@v1.0.1
         id: update-release
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: ${{ matrix.output }}
+          files: engarde-importer_${{ matrix.name }}.zip
           tag: release
 
 
