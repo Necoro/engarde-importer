@@ -16,11 +16,11 @@ jobs:
         include:
           - os: ubuntu-latest
             name: linux
-            output: bin/engarde-importer
+            output: engarde-importer
             ldflags: ""
           - os: windows-2022
             name: windows
-            output: bin/engarde-importer.exe
+            output: engarde-importer.exe
             ldflags: "-H=windowsgui -extldflags=-static"
     env:
       GOARCH: amd64
