@@ -100,7 +100,7 @@ type GridLine struct {
 }
 
 func Line(label string, widget ...g.Widget) GridLine {
-	return GridLine{label, g.Layout(widget)}
+	return GridLine{label, g.Row(widget...)}
 }
 
 const gridPadding = 10
@@ -178,16 +178,16 @@ func buildEntry(idx int) g.Widget {
 				Size(comboSize).OnChange(entry.buildTarget)),
 			Line("Altersklasse", g.Combo("",
 				entry.ageGroup.String(), AgeGroupStrings, (*int32)(&entry.ageGroup)).
-				Size(comboSize)),
-			Line("Unterverzeichnis", g.Row(
-				g.InputText(&entry.target).OnChange(func() {
-					if entry.target == "" {
-						entry.manualTarget = false
-						entry.buildTarget()
-					} else {
-						entry.manualTarget = true
-					}
-				}),
+				Size(comboSize),
+				g.Labelf("DA auf %d Punkte", entry.ageGroup.KOPoints())),
+			Line("Unterverzeichnis", g.InputText(&entry.target).OnChange(func() {
+				if entry.target == "" {
+					entry.manualTarget = false
+					entry.buildTarget()
+				} else {
+					entry.manualTarget = true
+				}
+			}),
 				g.Tooltip(`Wenn nur ein Name: Unterverzeichnis unter Zielverzeichnis.
 Wenn ein Pfad: Zielverzeichnis wird ignoriert, vollständiger Pfad wird genommen.
 
@@ -201,8 +201,8 @@ Um die Autogenierung wieder zu aktivieren, einmal den Inhalt löschen.`),
 						entry.target = dir
 						entry.manualTarget = true
 					}
-				}))),
-			Line("Ophardt-Export", g.Row(
+				})),
+			Line("Ophardt-Export",
 				g.InputText(&entry.inputFile),
 				g.Tooltip("Pfad zur CSV aus Ophardt."),
 				g.Button(chooseStr).OnClick(func() {
@@ -214,7 +214,7 @@ Um die Autogenierung wieder zu aktivieren, einmal den Inhalt löschen.`),
 					if err == nil && file != "" {
 						entry.inputFile = file
 					}
-				}))),
+				})),
 		),
 		PopID())
 }
@@ -247,7 +247,7 @@ func loop() {
 			Line("Wettkampftag", g.DatePicker("##date", &header.date).
 				Format("02.01.2006").StartOfWeek(time.Monday).
 				Size(comboSize)),
-			Line("Zielverzeichnis", g.Row(
+			Line("Zielverzeichnis",
 				g.InputText(&header.targetDir),
 				g.Tooltip("Oberverzeichnis in dem für alle Konfigurationen ein Unterverzeichnis angelegt wird"),
 				g.Button(chooseStr).OnClick(func() {
@@ -255,7 +255,7 @@ func loop() {
 					if err == nil && dir != "" {
 						header.targetDir = dir
 					}
-				}))),
+				})),
 		),
 		entryBuilder(),
 		g.Style().SetFont(icomoonFI).To(g.Row(
