@@ -91,7 +91,7 @@
   nombre_touches_poules 5
   qual_fin_poules_sur 1
   clas_fin_poules_sur 1
-  nombre_touches_tableaux 15
+  nombre_touches_tableaux {{.AgeGroup.KOPoints}}
   modifie vrai
   etat poules
   etattour constitution

@@ -75,6 +75,13 @@ func (a AgeGroup) Engarde() (string, error) {
 	}
 }
 
+func (a AgeGroup) KOPoints() int {
+	if a == AgeVeteran {
+		return 10
+	}
+	return 15
+}
+
 func AgeGroupFromString(content string) (AgeGroup, error) {
 	switch content {
 	case "V":
