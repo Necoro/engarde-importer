@@ -40,7 +40,7 @@ func (p Participant) EngardePoints() string {
 	if p.Points <= 0 || math.IsNaN(p.Points) {
 		points = 1
 	} else {
-		points = math.Ceil(p.Points)
+		points = math.Floor(p.Points)
 	}
 	return fmt.Sprintf("%.1f", points)
 }
