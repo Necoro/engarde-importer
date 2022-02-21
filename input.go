@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/csv"
 	"fmt"
+	"math"
 	"os"
 	"strings"
 
@@ -10,15 +11,16 @@ import (
 )
 
 type Participant struct {
-	LastName    string `csv:"lastname"`
-	FirstName   string `csv:"firstname"`
-	DateOfBirth string `csv:"dateofbirth"`
-	Gender      Gender `csv:"gender"`
-	Nation      string `csv:"nation"`
-	Region      string `csv:"region"`
-	ClubStr     string `csv:"club"`
-	Id          uint   `csv:"-"`
-	ClubId      uint   `csv:"-"`
+	LastName    string  `csv:"lastname"`
+	FirstName   string  `csv:"firstname"`
+	DateOfBirth string  `csv:"dateofbirth"`
+	Gender      Gender  `csv:"gender"`
+	Nation      string  `csv:"nation"`
+	Region      string  `csv:"region"`
+	ClubStr     string  `csv:"club"`
+	Points      float64 `csv:"points,omitempty"`
+	Id          uint    `csv:"-"`
+	ClubId      uint    `csv:"-"`
 }
 
 type Club struct {
@@ -31,6 +33,16 @@ func (p Participant) MainClub() string {
 		return strings.Split(p.ClubStr, ", ")[0]
 	}
 	return p.ClubStr
+}
+
+func (p Participant) EngardePoints() string {
+	var points float64
+	if p.Points <= 0 || math.IsNaN(p.Points) {
+		points = 1
+	} else {
+		points = math.Ceil(p.Points)
+	}
+	return fmt.Sprintf("%.1f", points)
 }
 
 func parseOphardtInput(fileName string) ([]Participant, []Club, error) {
