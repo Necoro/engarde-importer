@@ -34,13 +34,15 @@ var icomoonFI *g.FontInfo
  */
 
 type entryCfg struct {
-	inputFile    string
-	target       string
-	manualTarget bool
-	gender       Gender
-	ageGroup     AgeGroup
-	weapon       Weapon
-	cfg          *EngardeConfig
+	inputFile         string
+	target            string
+	description       string
+	manualTarget      bool
+	manualDescription bool
+	gender            Gender
+	ageGroup          AgeGroup
+	weapon            Weapon
+	cfg               *EngardeConfig
 }
 
 func (entry *entryCfg) buildTarget() {
@@ -56,6 +58,24 @@ func (entry *entryCfg) buildTarget() {
 	}
 }
 
+func (entry *entryCfg) buildDescription() {
+	if entry.manualDescription {
+		return
+	}
+
+	if header.description == "" {
+		entry.description = ""
+	} else {
+		entry.description = fmt.Sprintf("%s %s %s",
+			header.description, entry.gender.String(), entry.weapon.String())
+	}
+}
+
+func (entry *entryCfg) buildDetails() {
+	entry.buildTarget()
+	entry.buildDescription()
+}
+
 func (entry *entryCfg) targetDone() bool {
 	return entry.manualTarget || filepath.IsAbs(entry.target)
 }
@@ -69,7 +89,7 @@ func (entry *entryCfg) fullTarget() string {
 
 func newEntry() entryCfg {
 	e := entryCfg{}
-	e.buildTarget()
+	e.buildDetails()
 	return e
 }
 
@@ -172,14 +192,22 @@ func buildEntry(idx int) g.Widget {
 		Grid(
 			Line("Waffe", g.Combo("",
 				entry.weapon.String(), WeaponStrings, (*int32)(&entry.weapon)).
-				Size(comboSize).OnChange(entry.buildTarget)),
+				Size(comboSize).OnChange(entry.buildDetails)),
 			Line("Geschlecht", g.Combo("",
 				entry.gender.String(), GenderStrings, (*int32)(&entry.gender)).
-				Size(comboSize).OnChange(entry.buildTarget)),
+				Size(comboSize).OnChange(entry.buildDetails)),
 			Line("Altersklasse", g.Combo("",
 				entry.ageGroup.String(), AgeGroupStrings, (*int32)(&entry.ageGroup)).
 				Size(comboSize),
 				g.Labelf("DA auf %d Punkte", entry.ageGroup.KOPoints())),
+			Line("Beschreibung", g.InputText(&entry.description).OnChange(func() {
+				if entry.description == "" {
+					entry.manualDescription = false
+					entry.buildDescription()
+				} else {
+					entry.manualTarget = true
+				}
+			})),
 			Line("Unterverzeichnis", g.InputText(&entry.target).OnChange(func() {
 				if entry.target == "" {
 					entry.manualTarget = false
@@ -242,8 +270,11 @@ func loop() {
 					entries[i].buildTarget()
 				}
 			}), g.Tooltip("Kurzname des Turniers (z.B. WH2022)")),
-			Line("Beschreibung", g.InputText(&header.description),
-				g.Tooltip("Langname / Beschreibung des Turniers (z.B. Weißherbst 2022)")),
+			Line("Beschreibung", g.InputText(&header.description).OnChange(func() {
+				for i := range entries {
+					entries[i].buildDescription()
+				}
+			}), g.Tooltip("Langname / Beschreibung des Turniers (z.B. Weißherbst 2022)")),
 			Line("Wettkampftag", g.DatePicker("##date", &header.date).
 				Format("02.01.2006").StartOfWeek(time.Monday).
 				Size(comboSize)),
@@ -296,7 +327,7 @@ func doImport() {
 			InputFile:   e.inputFile,
 			OutputDir:   e.fullTarget(),
 			Name:        header.name,
-			Description: header.description,
+			Description: e.description,
 			Gender:      e.gender,
 			AgeGroup:    e.ageGroup,
 			Weapon:      e.weapon,
