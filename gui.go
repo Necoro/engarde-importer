@@ -221,6 +221,7 @@ func buildEntry(idx int) g.Widget {
 					if entry.ageGroup != AgeVeteran {
 						entry.ageSubGroupIdx = 0
 					}
+					entry.buildDetails()
 				}),
 				g.Labelf("DA auf %d Punkte", entry.ageGroup.KOPoints()),
 				If(entry.ageGroup == AgeVeteran,
