@@ -41,8 +41,16 @@ type entryCfg struct {
 	manualDescription bool
 	gender            Gender
 	ageGroup          AgeGroup
+	ageSubGroupIdx    int32
 	weapon            Weapon
 	cfg               *EngardeConfig
+}
+
+func (entry *entryCfg) getAgeSubGroup(prefix string) string {
+	if entry.ageSubGroupIdx == 0 {
+		return ""
+	}
+	return prefix + veteranSubgroupsWithIdx[entry.ageSubGroupIdx]
 }
 
 func (entry *entryCfg) buildTarget() {
@@ -53,8 +61,8 @@ func (entry *entryCfg) buildTarget() {
 	if header.name == "" {
 		entry.target = ""
 	} else {
-		entry.target = fmt.Sprintf("%s_%s%s",
-			header.name, entry.gender.ShortString(), entry.weapon.ShortString())
+		entry.target = fmt.Sprintf("%s_%s%s%s",
+			header.name, entry.gender.ShortString(), entry.weapon.ShortString(), entry.getAgeSubGroup("_"))
 	}
 }
 
@@ -66,8 +74,8 @@ func (entry *entryCfg) buildDescription() {
 	if header.description == "" {
 		entry.description = ""
 	} else {
-		entry.description = fmt.Sprintf("%s %s %s",
-			header.description, entry.gender.String(), entry.weapon.String())
+		entry.description = fmt.Sprintf("%s %s %s%s",
+			header.description, entry.gender.String(), entry.weapon.String(), entry.getAgeSubGroup(" "))
 	}
 }
 
@@ -173,6 +181,14 @@ func shouldQuit() {
 	g.Context.GetPlatform().SetShouldStop(true)
 }
 
+func If(cond bool, w g.Widget) g.Widget {
+	if cond {
+		return w
+	} else {
+		return g.Layout{}
+	}
+}
+
 /*
  * Putting together the GUI
  */
@@ -180,6 +196,8 @@ const (
 	comboSize = 120
 	chooseStr = "Wähle..."
 )
+
+var veteranSubgroupsWithIdx = []string{"##Vany", "V40", "V50", "V60", "V70"}
 
 func buildEntry(idx int) g.Widget {
 	entry := &entries[idx]
@@ -198,8 +216,18 @@ func buildEntry(idx int) g.Widget {
 				Size(comboSize).OnChange(entry.buildDetails)),
 			Line("Altersklasse", g.Combo("",
 				entry.ageGroup.String(), AgeGroupStrings, (*int32)(&entry.ageGroup)).
-				Size(comboSize),
-				g.Labelf("DA auf %d Punkte", entry.ageGroup.KOPoints())),
+				Size(comboSize).
+				OnChange(func() {
+					if entry.ageGroup != AgeVeteran {
+						entry.ageSubGroupIdx = 0
+					}
+				}),
+				g.Labelf("DA auf %d Punkte", entry.ageGroup.KOPoints()),
+				If(entry.ageGroup == AgeVeteran,
+					g.Combo("", entry.getAgeSubGroup(""), veteranSubgroupsWithIdx, &entry.ageSubGroupIdx).
+						Size(comboSize).OnChange(entry.buildDetails),
+				),
+			),
 			Line("Beschreibung", g.InputText(&entry.description).OnChange(func() {
 				if entry.description == "" {
 					entry.manualDescription = false
