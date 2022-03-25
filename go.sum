@@ -27,8 +27,9 @@ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORN
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/kylelemons/godebug v1.1.0 h1:RPNrshWIDI6G2gRW9EHilWtl7Z6Sb1BR0xunSBf0SNc=
-github.com/ncruces/zenity v0.7.12 h1:NITUYXHby0Wlb+4lWsBs53U4n8hGqDPrnyxuHT1geHs=
-github.com/ncruces/zenity v0.7.12/go.mod h1:218cld52IfyQ5Mkdt/koDUBSz93sM81DZ3OQNkj8o+c=
+github.com/kylelemons/godebug v1.1.0/go.mod h1:9/0rRGxNHcop5bhtWyNeEfOS8JIWk580+fNqagV/RAw=
+github.com/ncruces/zenity v0.7.14 h1:Trzc2a12fitZK2EuhPbxAjuVEAkAk2ktFPSeZbT7NsU=
+github.com/ncruces/zenity v0.7.14/go.mod h1:zmJPBh9OQVwTd+Zce4xsqX+R2aQmjOml8TYiQnA0dy0=
 github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8 h1:KoWmjvw+nsYOo29YJK9vDA65RGE3NrOnUtO7a+RF9HU=
 github.com/pkg/browser v0.0.0-20210911075715-681adbf594b8/go.mod h1:HKlIX3XHQyzLZPlr7++PzdhaXEj94dEiJgZDTsxEqUI=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
