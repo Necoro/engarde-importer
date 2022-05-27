@@ -6,7 +6,7 @@ require (
 	github.com/AllenDang/giu v0.6.2-0.20220130021726-eb9f90ebac9d
 	github.com/AllenDang/imgui-go v1.12.1-0.20220118055608-8cbd98e97ca2
 	github.com/gogs/chardet v0.0.0-20211120154057-b7413eaefb8f
-	github.com/jszwec/csvutil v1.6.0
+	github.com/jszwec/csvutil v1.7.0
 	github.com/ncruces/zenity v0.7.12
 	golang.org/x/text v0.3.7
 )
