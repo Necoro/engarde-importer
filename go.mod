@@ -8,7 +8,7 @@ require (
 	github.com/gogs/chardet v0.0.0-20211120154057-b7413eaefb8f
 	github.com/jszwec/csvutil v1.6.0
 	github.com/ncruces/zenity v0.7.12
-	golang.org/x/text v0.3.7
+	golang.org/x/text v0.6.0
 )
 
 require (
@@ -23,7 +23,7 @@ require (
 	github.com/randall77/makefat v0.0.0-20210315173500-7ddd0e42c844 // indirect
 	github.com/sahilm/fuzzy v0.1.0 // indirect
 	golang.org/x/image v0.0.0-20210628002857-a66eb6448b8d // indirect
-	golang.org/x/sys v0.0.0-20210909193231-528a39cd75f3 // indirect
+	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 )
 
 replace github.com/AllenDang/giu => github.com/Necoro/giu v0.6.2-0.20220201221735-f324c6f17ebf
